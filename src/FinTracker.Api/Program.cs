@@ -1,9 +1,10 @@
+using FinTracker.Api.Endpoints;
 using FinTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configura??o do DbContext com PostgreSQL
+// Configuração do DbContext com PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Host=localhost;Port=5432;Database=fintracker_db;Username=fintracker;Password=fintracker_secret_pass";
 
@@ -24,7 +25,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "FinTracker Core API", Version = "v1", Description = "API RESTful para gest?o financeira pessoal e empresarial (MEI)" });
+    c.SwaggerDoc("v1", new() { Title = "FinTracker Core API", Version = "v1", Description = "API RESTful para gestão financeira pessoal e empresarial (MEI)" });
 });
 
 var app = builder.Build();
@@ -47,4 +48,10 @@ app.MapGet("/api/v1/health", () => Results.Ok(new
 .WithName("HealthCheck")
 .WithOpenApi();
 
+// Mapeamento dos Endpoints de Domínio
+app.MapAccountEndpoints();
+
 app.Run();
+
+public partial class Program { }
+
