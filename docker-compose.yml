@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: fintracker-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fintracker}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fintracker_secret_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-fintracker_db}
+    ports:
+      - "127.0.0.1:5432:5432" # Restrito ao host local para seguranca (SSH tunnel / DBeaver)
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fintracker} -d ${POSTGRES_DB:-fintracker_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - fintracker-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fintracker-api:latest
+    container_name: fintracker-app
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - ASPNETCORE_HTTP_PORTS=8000
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${POSTGRES_DB:-fintracker_db};Username=${POSTGRES_USER:-fintracker};Password=${POSTGRES_PASSWORD:-fintracker_secret_pass}
+      - UPLOAD_DIR=/app/uploads
+      - APP_SECRET=${APP_SECRET:-fintracker_super_secure_jwt_secret_key_at_least_32_bytes_long_2026}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - fintracker-network
+
+networks:
+  fintracker-network:
+    name: fintracker-network
+    driver: bridge
