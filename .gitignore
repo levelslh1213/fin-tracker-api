@@ -1,0 +1,12 @@
+## .NET Core / C# gitignore
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+.idea/
+*.suo
+*.userprefs
+appsettings.Development.json

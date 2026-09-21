@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\FinTracker.Domain\FinTracker.Domain.csproj" />
+    <ProjectReference Include="..\..\src\FinTracker.Infrastructure\FinTracker.Infrastructure.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>
