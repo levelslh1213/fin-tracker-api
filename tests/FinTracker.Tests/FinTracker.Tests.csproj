@@ -9,7 +9,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FinTracker.Domain\FinTracker.Domain.csproj" />
     <ProjectReference Include="..\..\src\FinTracker.Infrastructure\FinTracker.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\FinTracker.Api\FinTracker.Api.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.2" />
+    <PackageReference Include="FluentAssertions" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
